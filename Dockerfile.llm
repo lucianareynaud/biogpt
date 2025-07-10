@@ -1,0 +1,49 @@
+FROM python:3.11-slim-bookworm
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    TRANSFORMERS_CACHE=/app/models \
+    HF_HOME=/app/models \
+    MODEL_NAME=microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext \
+    EMBEDDING_MODEL=intfloat/e5-small-v2
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    git-lfs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install \
+    "numpy<2.0" \
+    torch==2.1.0 \
+    transformers==4.35.0 \
+    sentence-transformers==2.7.0 \
+    fastapi==0.104.1 \
+    uvicorn==0.24.0 \
+    pydantic==2.4.2
+
+# Create models directory
+RUN mkdir -p /app/models
+
+# Models will be downloaded at runtime to avoid build issues
+
+# Copy LLM service code
+COPY llm_service.py .
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8001/health || exit 1
+
+# Expose port
+EXPOSE 8001
+
+# Run the LLM service
+CMD ["uvicorn", "llm_service:app", "--host", "0.0.0.0", "--port", "8001"] 

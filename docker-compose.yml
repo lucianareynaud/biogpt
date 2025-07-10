@@ -1,0 +1,86 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+      - ./reports:/app/reports
+      - ./uploads:/app/uploads
+    environment:
+      - PYTHONPATH=/app
+    env_file:
+      - .env
+    depends_on:
+      - chroma
+      - llm
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - genomic-network
+
+  llm:
+    build:
+      context: .
+      dockerfile: Dockerfile.llm
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./models:/app/models
+    environment:
+      - MODEL_NAME=microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext
+      - EMBEDDING_MODEL=intfloat/e5-small-v2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - genomic-network
+
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./data/chroma:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - genomic-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - api
+    networks:
+      - genomic-network
+
+networks:
+  genomic-network:
+    driver: bridge
+
+volumes:
+  chroma_data:
+  models_data: 

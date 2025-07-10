@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Análise Genômica</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+            @top-center {
+                content: "Relatório de Análise Genômica";
+                font-family: 'Arial', sans-serif;
+                font-size: 10pt;
+                color: #666;
+            }
+            @bottom-center {
+                content: "Página " counter(page) " de " counter(pages);
+                font-family: 'Arial', sans-serif;
+                font-size: 10pt;
+                color: #666;
+            }
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #2c5aa0;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #2c5aa0;
+            font-size: 24pt;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 12pt;
+            margin: 5px 0;
+        }
+
+        .patient-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            border-left: 4px solid #2c5aa0;
+        }
+
+        .patient-info h2 {
+            color: #2c5aa0;
+            margin-top: 0;
+            font-size: 16pt;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #555;
+            min-width: 150px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+
+        .section h2 {
+            color: #2c5aa0;
+            font-size: 18pt;
+            border-bottom: 2px solid #2c5aa0;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        .section h3 {
+            color: #2c5aa0;
+            font-size: 14pt;
+            margin-bottom: 10px;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .stat-number {
+            font-size: 24pt;
+            font-weight: bold;
+            color: #2c5aa0;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 10pt;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .variants-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+
+        .variants-table th,
+        .variants-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .variants-table th {
+            background-color: #2c5aa0;
+            color: white;
+            font-weight: bold;
+        }
+
+        .variants-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .classification-pathogenic {
+            background-color: #ffebee !important;
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        .classification-likely-pathogenic {
+            background-color: #fff3e0 !important;
+            color: #ef6c00;
+            font-weight: bold;
+        }
+
+        .classification-uncertain {
+            background-color: #fff9c4 !important;
+            color: #f57f17;
+        }
+
+        .classification-likely-benign {
+            background-color: #e8f5e8 !important;
+            color: #2e7d32;
+        }
+
+        .classification-benign {
+            background-color: #e8f5e8 !important;
+            color: #1b5e20;
+        }
+
+        .warning-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .info-box {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .important-box {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 9pt;
+            color: #666;
+            text-align: center;
+        }
+
+        .gene-summary {
+            margin-bottom: 20px;
+        }
+
+        .gene-card {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .gene-name {
+            color: #2c5aa0;
+            font-weight: bold;
+            font-size: 12pt;
+            margin-bottom: 5px;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>Relatório de Análise Genômica</h1>
+        <div class="subtitle">Análise de Variantes com Classificação ACMG</div>
+        <div class="subtitle">Gerado em {{ report_date }}</div>
+    </div>
+
+    <!-- Patient Information -->
+    <div class="patient-info">
+        <h2>Informações da Análise</h2>
+        <div class="info-row">
+            <span class="info-label">ID da Análise:</span>
+            <span>{{ analysis.id }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Arquivo Original:</span>
+            <span>{{ analysis.filename }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Data de Upload:</span>
+            <span>{{ analysis.upload_date }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Data de Processamento:</span>
+            <span>{{ analysis.completed_at }}</span>
+        </div>
+    </div>
+
+    <!-- Executive Summary -->
+    <div class="section">
+        <h2>Resumo Executivo</h2>
+        
+        <div class="summary-stats">
+            <div class="stat-card">
+                <span class="stat-number">{{ analysis.total_variants or 0 }}</span>
+                <div class="stat-label">Variantes Analisadas</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ (analysis.pathogenic_variants or 0) + (analysis.likely_pathogenic_variants or 0) }}</span>
+                <div class="stat-label">Variantes Clinicamente Relevantes</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ analysis.uncertain_variants or 0 }}</span>
+                <div class="stat-label">Variantes de Significado Incerto</div>
+            </div>
+        </div>
+
+        {% if (analysis.pathogenic_variants or 0) + (analysis.likely_pathogenic_variants or 0) > 0 %}
+        <div class="important-box">
+            <h3>⚠️ Variantes Clinicamente Significativas Identificadas</h3>
+            <p>Esta análise identificou <strong>{{ (analysis.pathogenic_variants or 0) + (analysis.likely_pathogenic_variants or 0) }}</strong> variante(s) com possível significado clínico. 
+            É recomendado consultar um médico geneticista ou conselheiro genético para interpretação adequada destes resultados.</p>
+        </div>
+        {% else %}
+        <div class="info-box">
+            <h3>✅ Nenhuma Variante Patogênica Identificada</h3>
+            <p>Esta análise não identificou variantes classificadas como patogênicas ou provavelmente patogênicas nos genes analisados. 
+            Isso não elimina completamente o risco genético, pois a análise é limitada aos dados fornecidos.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Detailed Classification -->
+    <div class="section">
+        <h2>Distribuição por Classificação ACMG</h2>
+        
+        <table class="variants-table">
+            <thead>
+                <tr>
+                    <th>Classificação</th>
+                    <th>Quantidade</th>
+                    <th>Percentual</th>
+                    <th>Descrição</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="classification-pathogenic">
+                    <td>Patogênica</td>
+                    <td>{{ analysis.pathogenic_variants or 0 }}</td>
+                    <td>{{ "%.1f"|format(((analysis.pathogenic_variants or 0) / (analysis.total_variants or 1)) * 100) }}%</td>
+                    <td>Causadoras de doença com alta evidência</td>
+                </tr>
+                <tr class="classification-likely-pathogenic">
+                    <td>Provavelmente Patogênica</td>
+                    <td>{{ analysis.likely_pathogenic_variants or 0 }}</td>
+                    <td>{{ "%.1f"|format(((analysis.likely_pathogenic_variants or 0) / (analysis.total_variants or 1)) * 100) }}%</td>
+                    <td>Provavelmente causadoras de doença</td>
+                </tr>
+                <tr class="classification-uncertain">
+                    <td>Significado Incerto (VUS)</td>
+                    <td>{{ analysis.uncertain_variants or 0 }}</td>
+                    <td>{{ "%.1f"|format(((analysis.uncertain_variants or 0) / (analysis.total_variants or 1)) * 100) }}%</td>
+                    <td>Evidência insuficiente para classificação</td>
+                </tr>
+                <tr class="classification-likely-benign">
+                    <td>Provavelmente Benigna</td>
+                    <td>{{ analysis.likely_benign_variants or 0 }}</td>
+                    <td>{{ "%.1f"|format(((analysis.likely_benign_variants or 0) / (analysis.total_variants or 1)) * 100) }}%</td>
+                    <td>Provavelmente não causadoras de doença</td>
+                </tr>
+                <tr class="classification-benign">
+                    <td>Benigna</td>
+                    <td>{{ analysis.benign_variants or 0 }}</td>
+                    <td>{{ "%.1f"|format(((analysis.benign_variants or 0) / (analysis.total_variants or 1)) * 100) }}%</td>
+                    <td>Não causadoras de doença</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {% if clinically_significant_variants %}
+    <div class="section page-break">
+        <h2>Variantes Clinicamente Significativas</h2>
+        
+        {% for variant in clinically_significant_variants %}
+        <div class="gene-card">
+            <div class="gene-name">{{ variant.gene_symbol or variant.rsid }} - {{ variant.acmg_classification }}</div>
+            <table class="variants-table">
+                <tr>
+                    <td><strong>rsID:</strong></td>
+                    <td>{{ variant.rsid }}</td>
+                    <td><strong>Genótipo:</strong></td>
+                    <td>{{ variant.genotype }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Posição:</strong></td>
+                    <td>{{ variant.chromosome }}:{{ variant.position }}</td>
+                    <td><strong>Frequência Populacional:</strong></td>
+                    <td>{{ "%.4f"|format(variant.gnomad_frequency or 0) }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Significado Clínico:</strong></td>
+                    <td colspan="3">{{ variant.clinical_significance or "Não disponível" }}</td>
+                </tr>
+                {% if variant.interpretation %}
+                <tr>
+                    <td><strong>Interpretação:</strong></td>
+                    <td colspan="3">{{ variant.interpretation }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if genes_summary %}
+    <div class="section page-break">
+        <h2>Resumo por Genes</h2>
+        
+        {% for gene in genes_summary %}
+        <div class="gene-summary">
+            <h3>{{ gene.gene_symbol }}</h3>
+            <p><strong>Variantes encontradas:</strong> {{ gene.variant_count }}</p>
+            <p><strong>Variantes clinicamente relevantes:</strong> {{ gene.significant_variants }}</p>
+            {% if gene.description %}
+            <p><strong>Função do gene:</strong> {{ gene.description }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Methodology -->
+    <div class="section page-break">
+        <h2>Metodologia</h2>
+        
+        <h3>Análise Realizada</h3>
+        <p>Esta análise foi realizada utilizando dados de sequenciamento direto ao consumidor (23andMe) 
+        com classificação baseada nas diretrizes ACMG-AMP 2015 simplificadas.</p>
+        
+        <h3>Bases de Dados Utilizadas</h3>
+        <ul>
+            <li><strong>ClinVar:</strong> Base de dados de variantes com significado clínico</li>
+            <li><strong>gnomAD:</strong> Frequências populacionais de variantes genéticas</li>
+            <li><strong>PubMedBERT:</strong> Modelo de IA para interpretação de literatura biomédica</li>
+        </ul>
+        
+        <h3>Critérios de Classificação ACMG</h3>
+        <p>As variantes foram classificadas seguindo uma versão simplificada dos critérios ACMG-AMP:</p>
+        <ul>
+            <li><strong>Patogênica:</strong> Evidência forte de patogenicidade</li>
+            <li><strong>Provavelmente Patogênica:</strong> Evidência moderada de patogenicidade</li>
+            <li><strong>Incerto (VUS):</strong> Evidência conflitante ou insuficiente</li>
+            <li><strong>Provavelmente Benigna:</strong> Evidência moderada de benignidade</li>
+            <li><strong>Benigna:</strong> Evidência forte de benignidade</li>
+        </ul>
+    </div>
+
+    <!-- Limitations -->
+    <div class="section">
+        <h2>Limitações e Considerações</h2>
+        
+        <div class="warning-box">
+            <h3>⚠️ Limitações Importantes</h3>
+            <ul>
+                <li>Esta análise é baseada em dados de microarray (23andMe) e não detecta todas as variantes possíveis</li>
+                <li>Variantes estruturais, inserções/deleções grandes e variantes em regiões não cobertas não são detectadas</li>
+                <li>A interpretação clínica de variantes genéticas está em constante evolução</li>
+                <li>Resultados normais não eliminam completamente o risco de doenças genéticas</li>
+                <li>Consulta com profissional de genética médica é recomendada para interpretação clínica</li>
+            </ul>
+        </div>
+        
+        <div class="info-box">
+            <h3>📋 Recomendações</h3>
+            <ul>
+                <li>Discuta estes resultados com um médico geneticista ou conselheiro genético</li>
+                <li>Considere histórico familiar e sintomas clínicos na interpretação</li>
+                <li>Mantenha-se atualizado sobre reclassificações de variantes</li>
+                <li>Para variantes de significado incerto, consider follow-up regular</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Relatório gerado automaticamente pelo sistema Genomic-LLM v1.0</p>
+        <p>Para uso educacional e informativo. Não substitui avaliação médica profissional.</p>
+        <p>Data de geração: {{ report_date }}</p>
+    </div>
+</body>
+</html> 
