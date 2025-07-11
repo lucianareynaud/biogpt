@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { DNA, Github, Globe } from 'lucide-react'
+import { FlaskConical, Github, Globe } from 'lucide-react'
 
 export default function Header() {
   return (
@@ -16,7 +16,7 @@ export default function Header() {
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-primary-600 rounded-lg">
-              <DNA className="w-6 h-6 text-white" />
+              <FlaskConical className="w-6 h-6 text-white" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Genomic-LLM</h1>

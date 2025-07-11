@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { DNA, Heart, Shield, Book } from 'lucide-react'
+import { FlaskConical, Heart, Shield, Book } from 'lucide-react'
 
 export default function Footer() {
   return (

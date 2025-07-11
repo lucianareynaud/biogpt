@@ -6,7 +6,7 @@ import FileUpload from './components/FileUpload'
 import AnalysisResults from './components/AnalysisResults'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import { DNA, TrendingUp, FileText, MessageCircle } from 'lucide-react'
+import { FlaskConical, TrendingUp, FileText, MessageCircle } from 'lucide-react'
 
 export default function Home() {
   const [analysisId, setAnalysisId] = useState<string | null>(null)
@@ -14,7 +14,7 @@ export default function Home() {
 
   const features = [
     {
-      icon: DNA,
+      icon: FlaskConical,
       title: 'Análise ACMG',
       description: 'Classificação de variantes seguindo diretrizes ACMG-AMP 2015',
       color: 'text-primary-600'
@@ -55,7 +55,7 @@ export default function Home() {
             >
               <div className="flex justify-center mb-6">
                 <div className="p-4 bg-primary-100 rounded-full">
-                  <DNA className="w-12 h-12 text-primary-600" />
+                  <FlaskConical className="w-12 h-12 text-primary-600" />
                 </div>
               </div>
               
@@ -71,7 +71,7 @@ export default function Home() {
               
               <div className="flex flex-wrap justify-center gap-4 mb-12">
                 <div className="badge badge-info">
-                  <DNA className="w-4 h-4 mr-1" />
+                  <FlaskConical className="w-4 h-4 mr-1" />
                   ACMG-2015
                 </div>
                 <div className="badge badge-success">

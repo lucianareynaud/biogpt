@@ -66,12 +66,12 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./frontend_simple
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - VITE_API_URL=http://localhost:8000
     depends_on:
       - api
     networks:

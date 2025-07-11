@@ -194,10 +194,12 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 ### Data Sources
 
-The platform automatically downloads and processes:
-- **ClinVar**: Variant clinical significance database
-- **gnomAD**: Population frequency data
-- **PubMedBERT**: Pre-trained biomedical language model
+During system initialization, the platform automatically downloads and caches reference data:
+- **ClinVar**: Variant clinical significance database (~2GB) - Downloaded once during setup from NCBI FTP
+- **gnomAD**: Population frequency data (variable size) - Downloaded once during setup from Broad Institute
+- **PubMedBERT**: Pre-trained biomedical language models (~500MB) - Downloaded during LLM service startup from HuggingFace Hub
+
+**Important**: These are public reference databases downloaded once during setup and cached locally. Your personal genomic data is never uploaded to external services.
 
 ## 📊 Data Processing Pipeline
 
@@ -363,6 +365,7 @@ npm install --dev
 # Run tests
 pytest backend/tests/
 npm test
+
 
 # Format code
 black backend/
