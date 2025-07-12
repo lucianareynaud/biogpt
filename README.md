@@ -250,6 +250,10 @@ During system initialization, the platform automatically downloads and caches re
 - Medical disclaimers and limitations
 - Educational use notifications
 
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 ## 🧪 Testing
 
 ### Sample Data
